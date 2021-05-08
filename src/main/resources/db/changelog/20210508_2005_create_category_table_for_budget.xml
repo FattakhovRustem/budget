@@ -1,0 +1,42 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210508_2005_create_sequence_category_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('category_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.category_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210508_2005_create_table_category_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="category" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('category_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.category (
+            id              INTEGER NOT NULL DEFAULT nextval('budget.category_seq'),
+            name             VARCHAR(100)    NOT NULL,
+
+            CONSTRAINT category_id_pk PRIMARY KEY (id)
+            );
+
+            COMMENT ON TABLE budget.category IS 'List of categories';
+            COMMENT ON COLUMN budget.category.id IS 'ID';
+            COMMENT ON COLUMN budget.category.name IS 'Name of category';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
