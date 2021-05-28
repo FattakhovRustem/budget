@@ -1,0 +1,57 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210524_1630_create_sequence_buy_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('buy_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.buy_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210524_1630_create_table_buy_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="buy" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('buy_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.buy (
+            id INTEGER NOT NULL DEFAULT nextval('budget.buy_seq'),
+            user_id INTEGER NOT NULL,
+            category_id INTEGER NOT NULL,
+            type_id INTEGER,
+            name VARCHAR(100) NOT NULL,
+            date DATE,
+            sum NUMERIC(10,2),
+            buy BOOLEAN,
+
+            CONSTRAINT buy_id_pk PRIMARY KEY (id),
+            CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES budget.user (id),
+            CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES budget.category (id),
+            CONSTRAINT type_id_fk FOREIGN KEY (type_id) REFERENCES budget.type (id)
+            );
+
+            COMMENT ON TABLE budget.buy IS 'List of buys';
+            COMMENT ON COLUMN budget.buy.id IS 'ID';
+            COMMENT ON COLUMN budget.buy.user_id IS 'id of user';
+            COMMENT ON COLUMN budget.buy.category_id IS 'id of category';
+            COMMENT ON COLUMN budget.buy.type_id IS 'id of type';
+            COMMENT ON COLUMN budget.buy.name IS 'Name of buy';
+            COMMENT ON COLUMN budget.buy.date IS 'Date of buy';
+            COMMENT ON COLUMN budget.buy.sum IS 'Sum of buy';
+            COMMENT ON COLUMN budget.buy.buy IS 'Buy or not';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

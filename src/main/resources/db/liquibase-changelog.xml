@@ -7,5 +7,13 @@
     <include file="changelog/1_add_functions.xml" relativeToChangelogFile="true"/>
     <include file="changelog/20210508_2000_create_budget_schema.xml" relativeToChangelogFile="true"/>
     <include file="changelog/20210508_2005_create_category_table_for_budget.xml" relativeToChangelogFile="true"/>
-    <include file="changelog/20210508_2010_insert data_for_category_table.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210508_2010_insert_data_for_category_table.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1348_create_type_table_for_budget.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1353_insert_data_for_type_table.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1625_create_user_table_for_budget.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1626_create_account_table_for_budget.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1627_create_income_table_for_budget.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1628_create_expensecategory_table_for_budget.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1629_create_expensetype_table_for_budget.xml" relativeToChangelogFile="true"/>
+    <include file="changelog/20210524_1630_create_buy_table_for_budget.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>

@@ -1,0 +1,62 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210521_1353_insert_data_for_type_table" author="rustem.fattakhov"  dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <tableExists schemaName="budget" tableName="type"/>
+            <sqlCheck expectedResult="0">
+                select count(1)
+                from budget.type
+                where name in ('Food')
+            </sqlCheck>
+            <sqlCheck expectedResult="1">
+                select count(1)
+                from budget.category
+                where name in ('Food')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            <!--Food-->
+            INSERT INTO budget.type (id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Food'), 'Food');
+            INSERT INTO budget.type (id, category_id,name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Food'), 'Cafe');
+
+            <!--Health-->
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Health'), 'Drug');
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Health'), 'Service');
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Health'), 'Beauty');
+
+            <!--Transport-->
+            INSERT INTO budget.type (id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Transport'), 'Taxi');
+            INSERT INTO budget.type (id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Transport'), 'Bus');
+
+            <!--Clothing-->
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Clothing'), 'Clothes');
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Clothing'), 'Footwear');
+
+            <!--Other-->
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Other'), 'Present');
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Other'), 'Hobby');
+            INSERT INTO budget.type(id, category_id, name)
+            VALUES (nextval('budget.type_seq'), (select id from budget.category where name = 'Other'), 'Relax');
+
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

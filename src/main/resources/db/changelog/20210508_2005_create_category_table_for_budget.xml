@@ -27,8 +27,8 @@
         </preConditions>
         <sql>
             CREATE TABLE budget.category (
-            id              INTEGER NOT NULL DEFAULT nextval('budget.category_seq'),
-            name             VARCHAR(100)    NOT NULL,
+            id INTEGER NOT NULL DEFAULT nextval('budget.category_seq'),
+            name VARCHAR(100) NOT NULL,
 
             CONSTRAINT category_id_pk PRIMARY KEY (id)
             );
