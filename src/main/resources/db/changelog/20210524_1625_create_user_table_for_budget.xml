@@ -1,0 +1,48 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210524_1625_create_sequence_user_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('user_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.user_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210524_1625_create_table_user_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="user" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('user_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.user (
+            id INTEGER NOT NULL DEFAULT nextval('budget.user_seq'),
+            surname VARCHAR(100) NOT NULL,
+            name VARCHAR(100) NOT NULL,
+            email VARCHAR(100) NOT NULL,
+            password VARCHAR(100) NOT NULL,
+
+            CONSTRAINT user_id_pk PRIMARY KEY (id)
+            );
+
+            COMMENT ON TABLE budget.user IS 'List of users';
+            COMMENT ON COLUMN budget.user.id IS 'ID';
+            COMMENT ON COLUMN budget.user.surname IS 'Surname of user';
+            COMMENT ON COLUMN budget.user.name IS 'Name of user';
+            COMMENT ON COLUMN budget.user.email IS 'Email of user';
+            COMMENT ON COLUMN budget.user.password IS 'Password of user';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

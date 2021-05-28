@@ -1,0 +1,47 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210524_1626_create_sequence_account_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('account_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.account_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210524_1626_create_table_account_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="account" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('account_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.account (
+            id INTEGER NOT NULL DEFAULT nextval('budget.account_seq'),
+            user_id INTEGER NOT NULL,
+            name VARCHAR(100) NOT NULL,
+            balance NUMERIC(10,2) NOT NULL,
+
+            CONSTRAINT account_id_pk PRIMARY KEY (id),
+            CONSTRAINT user_id_fk FOREIGN KEY (user_id) REFERENCES budget.user (id)
+            );
+
+            COMMENT ON TABLE budget.account IS 'List of accounts';
+            COMMENT ON COLUMN budget.account.id IS 'ID';
+            COMMENT ON COLUMN budget.account.user_id IS 'id of user';
+            COMMENT ON COLUMN budget.account.name IS 'Name of account';
+            COMMENT ON COLUMN budget.account.balance IS 'Balance of account';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

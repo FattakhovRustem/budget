@@ -1,0 +1,49 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210524_1627_create_sequence_income_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('income_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.income_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210524_1627_create_table_income_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="income" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('income_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.income (
+            id INTEGER NOT NULL DEFAULT nextval('budget.income_seq'),
+            account_id INTEGER NOT NULL,
+            date DATE NOT NULL,
+            sum NUMERIC(10, 2) NOT NULL,
+            description VARCHAR(100),
+
+            CONSTRAINT income_id_pk PRIMARY KEY (id),
+            CONSTRAINT account_id_fk FOREIGN KEY (account_id) REFERENCES budget.account (id)
+            );
+
+            COMMENT ON TABLE budget.income IS 'List of incomes';
+            COMMENT ON COLUMN budget.income.id IS 'ID';
+            COMMENT ON COLUMN budget.income.account_id IS 'id of account';;
+            COMMENT ON COLUMN budget.income.date IS 'Date of income';
+            COMMENT ON COLUMN budget.income.sum IS 'Sum of income';
+            COMMENT ON COLUMN budget.income.description IS 'Description';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

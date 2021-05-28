@@ -7,13 +7,13 @@
    http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
 
-    <changeSet id="20210508_2010_insert data_for_category_table" author="rustem.fattakhov"  dbms="postgresql">
+    <changeSet id="20210508_2010_insert_data_for_category_table" author="rustem.fattakhov"  dbms="postgresql">
         <preConditions onFail="MARK_RAN">
             <tableExists schemaName="budget" tableName="category"/>
             <sqlCheck expectedResult="0">
                 select count(1)
                 from budget.category
-                where name in ('Food', 'Pharmacy')
+                where name in ('Food')
             </sqlCheck>
         </preConditions>
         <sql>
@@ -21,7 +21,16 @@
             VALUES (nextval('budget.category_seq'), 'Food');
 
             INSERT INTO budget.category (id, name)
-            VALUES (nextval('budget.category_seq'), 'Pharmacy');
+            VALUES (nextval('budget.category_seq'), 'Health');
+
+            INSERT INTO budget.category(id, name)
+            VALUES (nextval('budget.category_seq'), 'Transport');
+
+            INSERT INTO budget.category(id, name)
+            VALUES (nextval('budget.category_seq'), 'Clothing');
+
+            INSERT INTO budget.category(id, name)
+            VALUES (nextval('budget.category_seq'), 'Other');
         </sql>
     </changeSet>
 

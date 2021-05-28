@@ -15,7 +15,9 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryDao languageDao;
 
     @Override
-    public Category getCategory(Integer languageId) { return languageDao.getCategory(languageId); }
+    public Category getCategory(Integer languageId) {
+        return languageDao.getCategory(languageId);
+    }
 
     @Override
     @Transactional

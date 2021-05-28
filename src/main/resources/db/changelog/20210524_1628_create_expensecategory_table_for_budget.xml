@@ -1,0 +1,48 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210524_1628_create_sequence_expensecategory_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('expensecategory_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.expensecategory_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210524_1628_create_table_expensecategory_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="expensecategory" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('expensecategory_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.expensecategory (
+            id INTEGER NOT NULL DEFAULT nextval('budget.expensecategory_seq'),
+            account_id INTEGER NOT NULL,
+            category_id INTEGER NOT NULL,
+            date DATE NOT NULL,
+
+            CONSTRAINT expensecategory_id_pk PRIMARY KEY (id),
+            CONSTRAINT account_id_fk FOREIGN KEY (account_id) REFERENCES budget.account (id),
+            CONSTRAINT category_id_fk FOREIGN KEY (category_id) REFERENCES budget.category (id)
+            );
+
+            COMMENT ON TABLE budget.expensecategory IS 'List of expense by category';
+            COMMENT ON COLUMN budget.expensecategory.id IS 'ID';
+            COMMENT ON COLUMN budget.expensecategory.account_id IS 'id of account';
+            COMMENT ON COLUMN budget.expensecategory.category_id IS 'id of category';
+            COMMENT ON COLUMN budget.expensecategory.date IS 'Date expense';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

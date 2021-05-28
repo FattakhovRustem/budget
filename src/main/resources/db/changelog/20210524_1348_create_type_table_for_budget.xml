@@ -1,0 +1,45 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210524_1347_create_sequence_type_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('type_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.type_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210524_1348_create_table_type_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="type" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('type_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.type (
+            id INTEGER NOT NULL DEFAULT nextval('budget.type_seq'),
+            category_id INTEGER NOT NULL,
+            name VARCHAR(100) NOT NULL,
+
+            CONSTRAINT type_id_pk PRIMARY KEY (id),
+            CONSTRAINT category_id_fk FOREIGN KEY(category_id) REFERENCES budget.category (id)
+            );
+
+            COMMENT ON TABLE budget.type IS 'List of types';
+            COMMENT ON COLUMN budget.type.id IS 'ID';
+            COMMENT ON COLUMN budget.type.category_id IS 'id of category';
+            COMMENT ON COLUMN budget.type.name IS 'Name of type';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

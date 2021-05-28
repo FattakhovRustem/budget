@@ -1,0 +1,50 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+   http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.10.xsd">
+
+    <changeSet id="20210524_1629_create_sequence_expensetype_seq" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="f">
+                select dbu_sequence_exists('expensetype_seq', 'budget')
+            </sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE SEQUENCE budget.expensetype_seq;
+        </sql>
+    </changeSet>
+
+    <changeSet id="20210524_1629_create_table_expensetype_for_budget" author="rustem.fattakhov" dbms="postgresql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="expensetype" schemaName="budget"/>
+            </not>
+            <sqlCheck expectedResult="t">select dbu_sequence_exists('expensetype_seq', 'budget')</sqlCheck>
+        </preConditions>
+        <sql>
+            CREATE TABLE budget.expensetype (
+            id INTEGER NOT NULL DEFAULT nextval('budget.expensetype_seq'),
+            expensecategory_id INTEGER NOT NULL,
+            type_id INTEGER,
+            sum NUMERIC(10, 2) NOT NULL,
+            description VARCHAR(100),
+
+            CONSTRAINT expensetype_id_pk PRIMARY KEY (id),
+            CONSTRAINT expensecategory_id_fk FOREIGN KEY (expensecategory_id) REFERENCES budget.expensecategory (id),
+            CONSTRAINT type_id_fk FOREIGN KEY (type_id) REFERENCES budget.type (id)
+            );
+
+            COMMENT ON TABLE budget.expensetype IS 'List of expense by type';
+            COMMENT ON COLUMN budget.expensetype.id IS 'ID';
+            COMMENT ON COLUMN budget.expensetype.expensecategory_id IS 'id of expense by category';
+            COMMENT ON COLUMN budget.expensetype.type_id IS 'id of type';
+            COMMENT ON COLUMN budget.expensetype.sum IS 'Sum of expense';
+            COMMENT ON COLUMN budget.expensetype.description IS 'Description';
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>
